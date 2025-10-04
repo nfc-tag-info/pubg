@@ -32,8 +32,6 @@
     box-shadow: 0 10px 30px rgba(2,6,23,.7);
     position:relative;
   }
-
-  /* PUBG LOGO */
   .logo{
     position:absolute;
     left:50%; top:0;
@@ -56,7 +54,6 @@
     color:#fff;
     font-size:1.6rem;
     text-align:center;
-    letter-spacing:.5px;
   }
   .countdown{
     display:flex;
@@ -98,8 +95,7 @@
     justify-content:center;
     flex-wrap:wrap;
   }
-  .search-form input,
-  .search-form select{
+  .search-form input{
     min-width:220px;
     padding:.6rem .8rem;
     border-radius:10px;
@@ -146,12 +142,6 @@
       <h2>PUBG žaidėjo statistika</h2>
       <form id="pubgSearch" class="search-form">
         <input id="pubgName" type="text" placeholder="Įvesk PUBG niką">
-        <select id="pubgPlatform">
-          <option value="steam" selected>Steam</option>
-          <option value="psn">PSN</option>
-          <option value="xbox">Xbox</option>
-          <option value="kakao">Kakao</option>
-        </select>
         <button type="submit">Rodyti statistiką</button>
       </form>
       <p id="pubgHint"></p>
@@ -193,11 +183,10 @@
   tick();
   const iv = setInterval(tick, 1000);
 
-  // PUBG Lookup paieška (atidaro naujame lange)
+  // PUBG paieška (atidaro pubg.op.gg)
   document.getElementById('pubgSearch').addEventListener('submit', function(e){
     e.preventDefault();
     const name = document.getElementById('pubgName').value.trim();
-    const platform = document.getElementById('pubgPlatform').value;
     const hint = document.getElementById('pubgHint');
 
     if(!name){
@@ -205,8 +194,8 @@
       return;
     }
 
-    const url = `https://pubglookup.com/players/${encodeURIComponent(platform)}/${encodeURIComponent(name)}`;
-    hint.innerHTML = `Atidaroma: <a href="${url}" target="_blank" rel="noopener" style="color:#ffcc00">PUBG Lookup profilis</a>`;
+    const url = `https://pubg.op.gg/user/${encodeURIComponent(name)}`;
+    hint.innerHTML = `Atidaroma: <a href="${url}" target="_blank" rel="noopener" style="color:#ffcc00">${url}</a>`;
     window.open(url, '_blank', 'noopener');
   });
 </script>
