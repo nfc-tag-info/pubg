@@ -3,222 +3,134 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Susitikimas / Countdown</title>
+<title>Iki kito susitikimo</title>
 <style>
   :root{
     --bg: #0f1724;
-    --card: #0b1220;
+    --panel: #0b1220;
     --accent: #ffcc00;
     --muted: #bfc8d6;
   }
-
-  /* Puslapio pagrindas */
+  *{box-sizing:border-box}
   body{
     margin:0;
-    font-family: Inter, Roboto, "Segoe UI", Arial, sans-serif;
-    background: linear-gradient(180deg, #071022 0%, #0d1a2a 100%);
-    color: var(--muted);
-    display:flex;
     min-height:100vh;
+    display:flex;
     align-items:center;
     justify-content:center;
     padding:2rem;
-    box-sizing:border-box;
+    font-family: Inter, Roboto, "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(180deg, #071022 0%, #0d1a2a 100%);
+    color:var(--muted);
   }
-
   .wrap{
     width:100%;
     max-width:720px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
     border-radius:14px;
-    padding:2.5rem 2rem 2rem 2rem;
-    box-shadow: 0 10px 30px rgba(2,6,23,0.7);
+    padding:3.5rem 2rem 2rem;
+    box-shadow: 0 10px 30px rgba(2,6,23,.7);
     position:relative;
-    overflow:visible;
   }
-
-  /* PUBG logo - viršuje "ikeltas" */
-  .logo-top{
+  /* LOGO viršuje */
+  .logo{
     position:absolute;
-    left:50%;
-    transform: translateX(-50%) translateY(-54px) scale(1);
-    top:0;
-    width:160px;
-    height:auto;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
-    padding:10px;
+    left:50%; top:0;
+    transform:translate(-50%,-50%);
+    background: rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.06);
+    padding:.5rem .75rem;
     border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.55), 0 6px 18px rgba(0,0,0,0.45);
-    z-index:30;
     backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 18px 40px rgba(0,0,0,.55), 0 6px 18px rgba(0,0,0,.45);
   }
-
-  .logo-top img{
-    max-width:100%;
-    display:block;
-    pointer-events:none;
-  }
+  .logo img{ display:block; height:40px; width:auto; }
 
   h1{
-    margin:0 0 1rem 0;
+    margin:0 0 .5rem 0;
     color:#fff;
     font-size:1.6rem;
     text-align:center;
-    letter-spacing:0.6px;
+    letter-spacing:.5px;
   }
-
-  .subtitle{
-    text-align:center;
-    margin-bottom:1.5rem;
-    color:var(--muted);
-  }
-
   .countdown{
     display:flex;
     gap:12px;
     justify-content:center;
-    margin-bottom:1.5rem;
+    margin:1rem 0 1.25rem;
+    flex-wrap:wrap;
   }
-
-  .countdown .item{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    padding:12px 14px;
+  .box{
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
     border-radius:10px;
+    padding:12px 14px;
     min-width:92px;
     text-align:center;
-    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.3);
   }
-
-  .countdown .num{
-    display:block;
-    font-weight:700;
-    font-size:1.4rem;
-    color:#fff;
-  }
-
-  .countdown .label{
-    font-size:0.78rem;
-    color:var(--muted);
-    margin-top:4px;
-  }
-
-  .card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
-    border-radius:10px;
-    padding:1rem;
-    margin-top:1rem;
-    text-align:center;
-    border:1px solid rgba(255,255,255,0.02);
-  }
-
-  .code{
-    font-family:monospace;
-    font-size:1.05rem;
-    margin:0.6rem 0;
-    background: rgba(255,255,255,0.02);
-    padding:8px 10px;
-    border-radius:6px;
-    display:inline-block;
-    color:#f8f8f8;
-  }
-
-  .btn{
-    display:inline-block;
-    padding:10px 14px;
-    border-radius:8px;
-    border: none;
-    background: linear-gradient(90deg, #ffcc00, #ffb300);
-    color:#0b0b0b;
-    font-weight:700;
-    cursor:pointer;
-    margin-top:8px;
-  }
-
-  /* mobilui truputį sutvarkyti */
-  @media (max-width:480px){
-    .countdown{ gap:8px; flex-wrap:wrap; }
-    .logo-top{ width:140px; transform: translateX(-50%) translateY(-46px) }
+  .num{ color:#fff; font-weight:700; font-size:1.4rem; display:block; }
+  .lbl{ font-size:.78rem; color:var(--muted); margin-top:4px; display:block; }
+  .date{
+    text-align:center; color:var(--muted); font-size:.98rem;
+    border-top:1px solid rgba(255,255,255,.06);
+    padding-top:1rem; margin-top:.25rem;
   }
 </style>
 </head>
 <body>
-  <div class="wrap" role="main">
-    <!-- PUBG logo: įdėk savo pubg-logo.svg į tą pačią direktoriją -->
-    <div class="logo-top" aria-hidden="true">
-      <img src="pubg-logo.svg" alt="PUBG logo" />
+  <main class="wrap" role="main">
+    <!-- Jei failas vadinasi "pubg-1-logo (2).svg", naudok užkoduotą kelią kaip žemiau -->
+    <div class="logo" aria-hidden="true">
+      <img src="pubg-1-logo%20(2).svg" alt="PUBG logo">
+      <!-- Alternatyva (jei pervadinsi): <img src="pubg-logo.svg" alt="PUBG logo"> -->
     </div>
 
     <h1>Iki kito susitikimo liko</h1>
-    <p class="subtitle">Susitikimas: <strong>2025-10-31</strong></p>
 
-    <div class="countdown" aria-live="polite" id="countdown">
-      <div class="item"><span class="num" id="days">--</span><span class="label">dienų</span></div>
-      <div class="item"><span class="num" id="hours">--</span><span class="label">val.</span></div>
-      <div class="item"><span class="num" id="minutes">--</span><span class="label">min.</span></div>
-      <div class="item"><span class="num" id="seconds">--</span><span class="label">sek.</span></div>
-    </div>
+    <section class="countdown" id="countdown" aria-live="polite">
+      <div class="box"><span class="num" id="days">--</span><span class="lbl">dienų</span></div>
+      <div class="box"><span class="num" id="hours">--</span><span class="lbl">val.</span></div>
+      <div class="box"><span class="num" id="minutes">--</span><span class="lbl">min.</span></div>
+      <div class="box"><span class="num" id="seconds">--</span><span class="lbl">sek.</span></div>
+    </section>
 
-    <div class="card">
-      <div>Štai tavo V-Bucks dovana:</div>
-      <div class="code" id="giftCode">SJHS-PMA8-78DN-JR4B</div>
-      <div>
-        <button class="btn" id="copyBtn">Kopijuoti kodą</button>
-      </div>
-      <p style="margin-top:0.6rem;color:var(--muted);font-size:0.9rem">
-        Paspausk įvesti kodą, kad nueitum į nukreipimą.
-      </p>
-      <a class="btn" href="https://www.fortnite.com" target="_blank" rel="noopener">Įvesti V-Bucks kodą</a>
-    </div>
-  </div>
+    <p class="date">Susitikimas: <strong>2025-10-31</strong> – <strong>2025-11-02</strong></p>
+  </main>
 
 <script>
-  // ===== Countdown iki 2025-10-31 (naudojama vietinė naršyklės data)
-  // Naudojame new Date(YYYY, MM-1, DD, hh, mm, ss) — tai interpretuojama kaip vietinis laikas.
-  const target = new Date(2025, 9, 31, 0, 0, 0); // 2025-10-31 (mėnesiai 0-based => 9 = October)
+  // COUNTDOWN iki pirmos susitikimo dienos (vietiniu naršyklės laiku)
+  const target = new Date(2025, 9, 31, 0, 0, 0); // 2025-10-31 00:00 (mėnesiai 0-based)
+  const el = {
+    d: document.getElementById('days'),
+    h: document.getElementById('hours'),
+    m: document.getElementById('minutes'),
+    s: document.getElementById('seconds'),
+  };
 
-  function updateCountdown(){
+  function tick(){
     const now = new Date();
     let diff = target - now;
 
     if (diff <= 0){
-      document.getElementById('days').textContent = '0';
-      document.getElementById('hours').textContent = '0';
-      document.getElementById('minutes').textContent = '0';
-      document.getElementById('seconds').textContent = '0';
-      clearInterval(intervalId);
+      el.d.textContent = '0';
+      el.h.textContent = '00';
+      el.m.textContent = '00';
+      el.s.textContent = '00';
+      clearInterval(iv);
       return;
     }
+    const total = Math.floor(diff/1000);
+    const d = Math.floor(total / 86400);
+    const h = Math.floor((total % 86400) / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
 
-    const secTotal = Math.floor(diff / 1000);
-    const days = Math.floor(secTotal / (3600*24));
-    const hours = Math.floor((secTotal % (3600*24)) / 3600);
-    const minutes = Math.floor((secTotal % 3600) / 60);
-    const seconds = secTotal % 60;
-
-    document.getElementById('days').textContent = days;
-    document.getElementById('hours').textContent = String(hours).padStart(2,'0');
-    document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
-    document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+    el.d.textContent = d;
+    el.h.textContent = String(h).padStart(2,'0');
+    el.m.textContent = String(m).padStart(2,'0');
+    el.s.textContent = String(s).padStart(2,'0');
   }
-
-  updateCountdown();
-  const intervalId = setInterval(updateCountdown, 1000);
-
-  // ===== Copy to clipboard functionality
-  document.getElementById('copyBtn').addEventListener('click', async () => {
-    const code = document.getElementById('giftCode').textContent.trim();
-    try {
-      await navigator.clipboard.writeText(code);
-      document.getElementById('copyBtn').textContent = 'Nukopijuota!';
-      setTimeout(() => { document.getElementById('copyBtn').textContent = 'Kopijuoti kodą'; }, 2000);
-    } catch (e) {
-      alert('Kopijavimas nepavyko — nukopijuok rankiniu būdu: ' + code);
-    }
-  });
+  tick();
+  const iv = setInterval(tick, 1000);
 </script>
 </body>
 </html>
