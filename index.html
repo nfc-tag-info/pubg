@@ -32,6 +32,8 @@
     box-shadow: 0 10px 30px rgba(2,6,23,.7);
     position:relative;
   }
+
+  /* PUBG LOGO */
   .logo{
     position:absolute;
     left:50%; top:0;
@@ -43,7 +45,11 @@
     backdrop-filter: blur(8px);
     box-shadow: 0 10px 30px rgba(0,0,0,.6);
   }
-  .logo img{ display:block; height:64px; width:auto; }
+  .logo img{
+    display:block;
+    height:64px;
+    width:auto;
+  }
 
   h1{
     margin:0 0 .5rem 0;
@@ -60,4 +66,149 @@
     flex-wrap:wrap;
   }
   .box{
-    bac
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    border-radius:10px;
+    padding:12px 14px;
+    min-width:92px;
+    text-align:center;
+  }
+  .num{ color:#fff; font-weight:700; font-size:1.4rem; display:block; }
+  .lbl{ font-size:.78rem; color:var(--muted); margin-top:4px; display:block; }
+  .date{
+    text-align:center; color:var(--muted); font-size:.98rem;
+    border-top:1px solid rgba(255,255,255,.06);
+    padding-top:1rem; margin-top:.25rem;
+  }
+
+  /* PUBG paieškos eilutė */
+  .stats{
+    margin-top:1.5rem;
+    border-top:1px solid rgba(255,255,255,.06);
+    padding-top:1.25rem;
+  }
+  .stats h2{
+    text-align:center;
+    color:#fff;
+    font-size:1.05rem;
+    margin:0 0 .75rem 0;
+  }
+  .search-form{
+    display:flex;
+    gap:.5rem;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .search-form input,
+  .search-form select{
+    min-width:220px;
+    padding:.6rem .8rem;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.15);
+    background:rgba(255,255,255,.06);
+    color:#fff;
+  }
+  .search-form button{
+    padding:.6rem 1rem;
+    border-radius:10px;
+    border:none;
+    background:linear-gradient(90deg,#ffcc00,#ffb300);
+    color:#0b0b0b;
+    font-weight:700;
+    cursor:pointer;
+  }
+  #pubgHint{
+    text-align:center;
+    font-size:.9rem;
+    color:#bfc8d6;
+    margin-top:.5rem;
+  }
+</style>
+</head>
+<body>
+  <main class="wrap" role="main">
+    <div class="logo" aria-hidden="true">
+      <img src="pubg-1-logo%20(2).svg" alt="PUBG logo">
+    </div>
+
+    <h1>Iki kito susitikimo liko</h1>
+
+    <section class="countdown" id="countdown" aria-live="polite">
+      <div class="box"><span class="num" id="days">--</span><span class="lbl">dienų</span></div>
+      <div class="box"><span class="num" id="hours">--</span><span class="lbl">val.</span></div>
+      <div class="box"><span class="num" id="minutes">--</span><span class="lbl">min.</span></div>
+      <div class="box"><span class="num" id="seconds">--</span><span class="lbl">sek.</span></div>
+    </section>
+
+    <p class="date">Susitikimas: <strong>2025-10-31</strong> – <strong>2025-11-02</strong></p>
+
+    <!-- PUBG paieškos juosta -->
+    <section class="stats">
+      <h2>PUBG žaidėjo statistika</h2>
+      <form id="pubgSearch" class="search-form">
+        <input id="pubgName" type="text" placeholder="Įvesk PUBG niką">
+        <select id="pubgPlatform">
+          <option value="steam" selected>Steam</option>
+          <option value="psn">PSN</option>
+          <option value="xbox">Xbox</option>
+          <option value="kakao">Kakao</option>
+        </select>
+        <button type="submit">Rodyti statistiką</button>
+      </form>
+      <p id="pubgHint"></p>
+    </section>
+  </main>
+
+<script>
+  // COUNTDOWN iki 2025-10-31
+  const target = new Date(2025, 9, 31, 0, 0, 0);
+  const el = {
+    d: document.getElementById('days'),
+    h: document.getElementById('hours'),
+    m: document.getElementById('minutes'),
+    s: document.getElementById('seconds'),
+  };
+
+  function tick(){
+    const now = new Date();
+    let diff = target - now;
+    if (diff <= 0){
+      el.d.textContent = '0';
+      el.h.textContent = '00';
+      el.m.textContent = '00';
+      el.s.textContent = '00';
+      clearInterval(iv);
+      return;
+    }
+    const total = Math.floor(diff/1000);
+    const d = Math.floor(total / 86400);
+    const h = Math.floor((total % 86400) / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+
+    el.d.textContent = d;
+    el.h.textContent = String(h).padStart(2,'0');
+    el.m.textContent = String(m).padStart(2,'0');
+    el.s.textContent = String(s).padStart(2,'0');
+  }
+  tick();
+  const iv = setInterval(tick, 1000);
+
+  // PUBG Lookup paieška (atidaro naujame lange)
+  document.getElementById('pubgSearch').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('pubgName').value.trim();
+    const platform = document.getElementById('pubgPlatform').value;
+    const hint = document.getElementById('pubgHint');
+
+    if(!name){
+      hint.textContent = 'Įrašyk žaidėjo vardą (niką).';
+      return;
+    }
+
+    const url = `https://pubglookup.com/players/${encodeURIComponent(platform)}/${encodeURIComponent(name)}`;
+    hint.innerHTML = `Atidaroma: <a href="${url}" target="_blank" rel="noopener" style="color:#ffcc00">PUBG Lookup profilis</a>`;
+    window.open(url, '_blank', 'noopener');
+  });
+</script>
+</body>
+</html>
