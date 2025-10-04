@@ -28,23 +28,28 @@
     max-width:720px;
     background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
     border-radius:14px;
-    padding:3.5rem 2rem 2rem;
+    padding:4.5rem 2rem 2rem; /* 🔹 daugiau vietos viršuje logo */
     box-shadow: 0 10px 30px rgba(2,6,23,.7);
     position:relative;
   }
-  /* LOGO viršuje */
+
+  /* 🔹 LOGO viršuje (padidintas ir su šviesesniu fonu) */
   .logo{
     position:absolute;
     left:50%; top:0;
     transform:translate(-50%,-50%);
-    background: rgba(255,255,255,.04);
-    border:1px solid rgba(255,255,255,.06);
-    padding:.5rem .75rem;
-    border-radius:12px;
-    backdrop-filter: blur(6px);
-    box-shadow: 0 18px 40px rgba(0,0,0,.55), 0 6px 18px rgba(0,0,0,.45);
+    background: rgba(255,255,255,0.12); /* 🔹 šviesesnis fonas */
+    border:1px solid rgba(255,255,255,.2);
+    padding:0.75rem 1rem; /* 🔹 šiek tiek daugiau vietos */
+    border-radius:14px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.6);
   }
-  .logo img{ display:block; height:40px; width:auto; }
+  .logo img{
+    display:block;
+    height:64px; /* 🔹 padidintas iš 40px */
+    width:auto;
+  }
 
   h1{
     margin:0 0 .5rem 0;
@@ -78,10 +83,8 @@
 </head>
 <body>
   <main class="wrap" role="main">
-    <!-- Jei failas vadinasi "pubg-1-logo (2).svg", naudok užkoduotą kelią kaip žemiau -->
     <div class="logo" aria-hidden="true">
       <img src="pubg-1-logo%20(2).svg" alt="PUBG logo">
-      <!-- Alternatyva (jei pervadinsi): <img src="pubg-logo.svg" alt="PUBG logo"> -->
     </div>
 
     <h1>Iki kito susitikimo liko</h1>
@@ -97,8 +100,8 @@
   </main>
 
 <script>
-  // COUNTDOWN iki pirmos susitikimo dienos (vietiniu naršyklės laiku)
-  const target = new Date(2025, 9, 31, 0, 0, 0); // 2025-10-31 00:00 (mėnesiai 0-based)
+  // COUNTDOWN iki 2025-10-31
+  const target = new Date(2025, 9, 31, 0, 0, 0);
   const el = {
     d: document.getElementById('days'),
     h: document.getElementById('hours'),
@@ -109,7 +112,6 @@
   function tick(){
     const now = new Date();
     let diff = target - now;
-
     if (diff <= 0){
       el.d.textContent = '0';
       el.h.textContent = '00';
