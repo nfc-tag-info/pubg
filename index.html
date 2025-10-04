@@ -1,138 +1,130 @@
-<!doctype html>
-<html lang="lt">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Iki kito susitikimo</title>
-<style>
-  :root{
-    --bg: #0f1724;
-    --panel: #0b1220;
-    --accent: #ffcc00;
-    --muted: #bfc8d6;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:2rem;
-    font-family: Inter, Roboto, "Segoe UI", Arial, sans-serif;
-    background: linear-gradient(180deg, #071022 0%, #0d1a2a 100%);
-    color:var(--muted);
-  }
-  .wrap{
-    width:100%;
-    max-width:720px;
-    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
-    border-radius:14px;
-    padding:4.5rem 2rem 2rem; /* 🔹 daugiau vietos viršuje logo */
-    box-shadow: 0 10px 30px rgba(2,6,23,.7);
-    position:relative;
-  }
+<!-- ... TAVO <head> ir CSS palik tokį pat (su didesniu, šviesesniu logo) ... -->
 
-  /* 🔹 LOGO viršuje (padidintas ir su šviesesniu fonu) */
-  .logo{
-    position:absolute;
-    left:50%; top:0;
-    transform:translate(-50%,-50%);
-    background: rgba(255,255,255,0.12); /* 🔹 šviesesnis fonas */
-    border:1px solid rgba(255,255,255,.2);
-    padding:0.75rem 1rem; /* 🔹 šiek tiek daugiau vietos */
-    border-radius:14px;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 10px 30px rgba(0,0,0,.6);
-  }
-  .logo img{
-    display:block;
-    height:64px; /* 🔹 padidintas iš 40px */
-    width:auto;
-  }
+<!-- Po datos eilutės įterpk šį bloką -->
+<section style="margin-top:1.5rem">
+  <h2 style="text-align:center;color:#fff;margin:0 0 .75rem 0;font-size:1.15rem">
+    PUBG statistika
+  </h2>
 
-  h1{
-    margin:0 0 .5rem 0;
-    color:#fff;
-    font-size:1.6rem;
-    text-align:center;
-    letter-spacing:.5px;
-  }
-  .countdown{
-    display:flex;
-    gap:12px;
-    justify-content:center;
-    margin:1rem 0 1.25rem;
-    flex-wrap:wrap;
-  }
-  .box{
-    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
-    border-radius:10px;
-    padding:12px 14px;
-    min-width:92px;
-    text-align:center;
-  }
-  .num{ color:#fff; font-weight:700; font-size:1.4rem; display:block; }
-  .lbl{ font-size:.78rem; color:var(--muted); margin-top:4px; display:block; }
-  .date{
-    text-align:center; color:var(--muted); font-size:.98rem;
-    border-top:1px solid rgba(255,255,255,.06);
-    padding-top:1rem; margin-top:.25rem;
-  }
-</style>
-</head>
-<body>
-  <main class="wrap" role="main">
-    <div class="logo" aria-hidden="true">
-      <img src="pubg-1-logo%20(2).svg" alt="PUBG logo">
-    </div>
+  <form id="statsForm" style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap">
+    <input id="names" type="text" placeholder="Pvz.: friend1, friend2"
+           style="min-width:260px;padding:.6rem .8rem;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff">
+    <select id="platform" title="Platforma" style="padding:.6rem .8rem;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff">
+      <option value="steam" selected>Steam</option>
+      <option value="kakao">Kakao</option>
+      <option value="psn">PSN</option>
+      <option value="xbox">Xbox</option>
+    </select>
+    <button class="btn" type="submit" style="padding:.6rem 1rem;border-radius:10px;border:none;background:linear-gradient(90deg,#ffcc00,#ffb300);color:#0b0b0b;font-weight:700;cursor:pointer">
+      Ieškoti
+    </button>
+  </form>
 
-    <h1>Iki kito susitikimo liko</h1>
-
-    <section class="countdown" id="countdown" aria-live="polite">
-      <div class="box"><span class="num" id="days">--</span><span class="lbl">dienų</span></div>
-      <div class="box"><span class="num" id="hours">--</span><span class="lbl">val.</span></div>
-      <div class="box"><span class="num" id="minutes">--</span><span class="lbl">min.</span></div>
-      <div class="box"><span class="num" id="seconds">--</span><span class="lbl">sek.</span></div>
-    </section>
-
-    <p class="date">Susitikimas: <strong>2025-10-31</strong> – <strong>2025-11-02</strong></p>
-  </main>
+  <div id="stats" style="margin-top:1rem"></div>
+</section>
 
 <script>
-  // COUNTDOWN iki 2025-10-31
-  const target = new Date(2025, 9, 31, 0, 0, 0);
-  const el = {
-    d: document.getElementById('days'),
-    h: document.getElementById('hours'),
-    m: document.getElementById('minutes'),
-    s: document.getElementById('seconds'),
-  };
+/* ====== PUBG STATS ======
+   Naudoja tavo backend endpointą /api/pubg?names=A,B&platform=steam
+   (žiūrėk 2 skyrių – Cloudflare Worker)
+*/
+const $stats = document.getElementById('stats');
+document.getElementById('statsForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const names = document.getElementById('names').value.trim();
+  const platform = document.getElementById('platform').value;
+  if (!names) { $stats.innerHTML = '<p style="text-align:center">Įrašyk bent vieną niką.</p>'; return; }
 
-  function tick(){
-    const now = new Date();
-    let diff = target - now;
-    if (diff <= 0){
-      el.d.textContent = '0';
-      el.h.textContent = '00';
-      el.m.textContent = '00';
-      el.s.textContent = '00';
-      clearInterval(iv);
-      return;
+  $stats.innerHTML = card('Kraunama...', '');
+
+  try {
+    const r = await fetch(`/api/pubg?names=${encodeURIComponent(names)}&platform=${encodeURIComponent(platform)}`);
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Nepavyko gauti duomenų');
+
+    // Renderis
+    const parts = [];
+    if (data.players?.length) {
+      parts.push(tablePlayers(data.players));
     }
-    const total = Math.floor(diff/1000);
-    const d = Math.floor(total / 86400);
-    const h = Math.floor((total % 86400) / 3600);
-    const m = Math.floor((total % 3600) / 60);
-    const s = total % 60;
-
-    el.d.textContent = d;
-    el.h.textContent = String(h).padStart(2,'0');
-    el.m.textContent = String(m).padStart(2,'0');
-    el.s.textContent = String(s).padStart(2,'0');
+    if (data.total) {
+      parts.push(tableTotal(data.total));
+    }
+    $stats.innerHTML = parts.join('');
+  } catch (err) {
+    $stats.innerHTML = card('Klaida', `<p style="margin:0.5rem 0 0">${err.message}</p>`);
   }
-  tick();
-  const iv = setInterval(tick, 1000);
+});
+
+// UI helperiai
+function card(title, body){
+  return `
+  <div style="background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;margin-top:.75rem">
+    <div style="color:#fff;font-weight:700;margin-bottom:.25rem">${title}</div>
+    ${body}
+  </div>`;
+}
+
+function tablePlayers(players){
+  const rows = players.map(p => {
+    const g = p.gameModeStats || {};
+    const agg = aggregateModes(g);
+    return `
+      <tr>
+        <td style="padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.06)">${p.name}</td>
+        <td style="text-align:right;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.06)">${agg.rounds}</td>
+        <td style="text-align:right;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.06)">${agg.wins}</td>
+        <td style="text-align:right;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.06)">${agg.kills}</td>
+        <td style="text-align:right;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.06)">${agg.assists}</td>
+        <td style="text-align:right;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.06)">${(agg.damage).toFixed(0)}</td>
+      </tr>`;
+  }).join('');
+  return card('Žaidėjai (lifetime)', `
+    <div style="overflow:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:.95rem;color:#cfd7e3">
+      <thead>
+        <tr style="color:#fff">
+          <th style="text-align:left;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.12)">Vardas</th>
+          <th style="text-align:right;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.12)">Mačai</th>
+          <th style="text-align:right;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.12)">Pergalės</th>
+          <th style="text-align:right;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.12)">Nuš.</th>
+          <th style="text-align:right;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.12)">Asist.</th>
+          <th style="text-align:right;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.12)">Žala</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+  `);
+}
+
+function tableTotal(t){
+  return card('Bendra suma', `
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      ${chip('Mačai', t.rounds)}
+      ${chip('Pergalės', t.wins)}
+      ${chip('Nušauta', t.kills)}
+      ${chip('Asistai', t.assists)}
+      ${chip('Žala', Math.round(t.damage))}
+    </div>
+  `);
+}
+function chip(label, value){
+  return `<div style="padding:.6rem .8rem;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)"><div style="color:#fff;font-weight:700">${value}</div><div style="font-size:.8rem;color:#cfd7e3">${label}</div></div>`;
+}
+
+// Sumuoja per visus game modes (solo/duo/squad ir t.t.)
+function aggregateModes(gms){
+  const keys = Object.keys(gms);
+  const out = { rounds:0,wins:0,kills:0,assists:0,damage:0 };
+  keys.forEach(k=>{
+    const m = gms[k] || {};
+    out.rounds += m.roundsPlayed || 0;
+    out.wins += m.wins || 0;
+    out.kills += m.kills || 0;
+    out.assists += m.assists || 0;
+    out.damage += m.damageDealt || 0;
+  });
+  return out;
+}
 </script>
-</body>
-</html>
