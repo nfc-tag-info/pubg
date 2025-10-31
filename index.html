@@ -43,11 +43,7 @@
     backdrop-filter: blur(8px);
     box-shadow: 0 10px 30px rgba(0,0,0,.6);
   }
-  .logo img{
-    display:block;
-    height:64px;
-    width:auto;
-  }
+  .logo img{ display:block; height:64px; width:auto; }
 
   h1{
     margin:0 0 .5rem 0;
@@ -126,7 +122,7 @@
       <img src="pubg-1-logo%20(2).svg" alt="PUBG logo">
     </div>
 
-    <h1>Iki kito susitikimo liko</h1>
+    <h1 id="title">Iki kito susitikimo liko</h1>
 
     <section class="countdown" id="countdown" aria-live="polite">
       <div class="box"><span class="num" id="days">--</span><span class="lbl">dienų</span></div>
@@ -135,7 +131,7 @@
       <div class="box"><span class="num" id="seconds">--</span><span class="lbl">sek.</span></div>
     </section>
 
-    <p class="date">Susitikimas: <strong>2025-10-31</strong> – <strong>2025-11-02</strong></p>
+    <p class="date">Susitikimas: <strong>2025-10-31 17:00</strong> – <strong>2025-11-02</strong></p>
 
     <!-- PUBG paieškos juosta -->
     <section class="stats">
@@ -149,8 +145,11 @@
   </main>
 
 <script>
-  // COUNTDOWN iki 2025-10-31
-  const target = new Date(2025, 9, 31, 0, 0, 0);
+  // ===== COUNTDOWN iki 2025-10-31 17:00 =====
+  // Pastaba: skaičiuojama pagal žiūrinčiojo įrenginio laiko zoną.
+  // Jei įrenginys Lietuvoje – tai bus 17:00 Lietuvos laiku.
+  const target = new Date(2025, 9, 31, 17, 0, 0); // (mėnesiai 0-based: 9 = spalis)
+  const titleEl = document.getElementById('title');
   const el = {
     d: document.getElementById('days'),
     h: document.getElementById('hours'),
@@ -161,7 +160,10 @@
   function tick(){
     const now = new Date();
     let diff = target - now;
+
     if (diff <= 0){
+      // Kai pasibaigia — parodome pranešimą ir nustojame skaičiuoti
+      titleEl.innerHTML = 'Susitikimas prasidėjo 🍺';
       el.d.textContent = '0';
       el.h.textContent = '00';
       el.m.textContent = '00';
@@ -169,6 +171,7 @@
       clearInterval(iv);
       return;
     }
+
     const total = Math.floor(diff/1000);
     const d = Math.floor(total / 86400);
     const h = Math.floor((total % 86400) / 3600);
@@ -183,7 +186,7 @@
   tick();
   const iv = setInterval(tick, 1000);
 
-  // PUBG paieška (atidaro pubg.op.gg)
+  // ===== PUBG paieška (atidaro pubg.op.gg) =====
   document.getElementById('pubgSearch').addEventListener('submit', function(e){
     e.preventDefault();
     const name = document.getElementById('pubgName').value.trim();
