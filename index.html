@@ -216,13 +216,12 @@
         </div>
       </div>
       <canvas id="game" width="900" height="260"></canvas>
-      <div class="hint">Šokimas: <b>Space</b> arba <b>↑</b> arba <b>palietimas</b>. – vesk per kliūtis, rink taškus 🎯</div>
+      <div class="hint">Šokimas: <b>Space</b> arba <b>↑</b> arba <b>bet koks paspaudimas ekrane</b>. – vesk per kliūtis, rink taškus 🎯</div>
     </div>
   </div>
 
 <script>
   // ===== COUNTDOWN iki 2025-11-21 17:00 =====
-  // Skaičiuojama pagal žiūrinčiojo įrenginio laiko zoną.
   const target = new Date(2025, 10, 21, 17, 0, 0); // 10 = lapkritis (mėnesiai 0-based)
   const titleEl = document.getElementById('title');
   const el = {
@@ -293,17 +292,26 @@
   const GROUND_Y = cvs.height - 40;
   const GRAV = 2000;
   const JUMP_V = -700;
-  let speed = 300;
-  const speedGain = 0.2;
+
+  // 🔹 Greitis pagal taškus
+  const BASE_SPEED = 300;
+  let speed = BASE_SPEED;
+  const MAX_SCALE_SCORE = 130;   // apie 130 taškų – ~2x greitis
+  const SPEED_ACCEL = 800;       // kaip greitai prisitaiko prie target greičio
 
   const player = { x:60, y:GROUND_Y-40, w:34, h:40, vy:0, onGround:true };
   const obstacles = [];
   let spawnTimer = 0;
 
   function resetGame(){
-    score = 0; speed = 300; spawnTimer = 0;
-    player.y = GROUND_Y-40; player.vy = 0; player.onGround = true;
-    obstacles.length = 0; lastT = performance.now();
+    score = 0;
+    speed = BASE_SPEED;
+    spawnTimer = 0;
+    player.y = GROUND_Y-40;
+    player.vy = 0;
+    player.onGround = true;
+    obstacles.length = 0;
+    lastT = performance.now();
     scoreEl.textContent = score;
   }
 
@@ -322,8 +330,17 @@
   }
 
   function update(dt){
-    speed += speedGain * dt;
+    // target greitis proporcingas taškams
+    const clampedScore = Math.min(score, MAX_SCALE_SCORE);
+    const targetSpeed = BASE_SPEED * (1 + clampedScore / MAX_SCALE_SCORE);
 
+    if (speed < targetSpeed){
+      speed = Math.min(targetSpeed, speed + SPEED_ACCEL * dt);
+    } else if (speed > targetSpeed){
+      speed = Math.max(targetSpeed, speed - SPEED_ACCEL * dt);
+    }
+
+    // žaidėjo fizika
     player.vy += GRAV * dt;
     player.y += player.vy * dt;
     if (player.y >= GROUND_Y - player.h){
@@ -332,6 +349,7 @@
       player.onGround = true;
     }
 
+    // kliūčių logika
     spawnTimer -= dt;
     if (spawnTimer <= 0){
       spawnObstacle();
@@ -405,7 +423,10 @@
   }
 
   function rectsCollide(a,b){
-    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    return a.x < b.x + b.w &&
+           a.x + a.w > b.x &&
+           a.y < b.y + b.h &&
+           a.y + a.h > b.y;
   }
 
   function drawCenterText(text, size){
@@ -432,17 +453,18 @@
     const restartKey = (e)=>{
       if (e.code==='Space' || e.code==='ArrowUp'){
         window.removeEventListener('keydown', restartKey);
-        cvs.removeEventListener('pointerdown', restartTap);
+        overlay.removeEventListener('pointerdown', restartTap);
         startGame();
       }
     };
-    const restartTap = ()=>{
+    const restartTap = (e)=>{
+      if (e.target.closest('button')) return;
       window.removeEventListener('keydown', restartKey);
-      cvs.removeEventListener('pointerdown', restartTap);
+      overlay.removeEventListener('pointerdown', restartTap);
       startGame();
     };
     window.addEventListener('keydown', restartKey);
-    cvs.addEventListener('pointerdown', restartTap);
+    overlay.addEventListener('pointerdown', restartTap);
   }
 
   function startGame(){
@@ -476,6 +498,7 @@
 
   pauseBtn.addEventListener('click', togglePause);
 
+  // Klaviatūra
   window.addEventListener('keydown', (e)=>{
     if (overlay.style.display !== 'flex') return;
     if (e.code === 'Space' || e.code === 'ArrowUp'){
@@ -487,7 +510,9 @@
     }
   });
 
-  cvs.addEventListener('pointerdown', ()=>{
+  // 🔹 TOUCH – visa overlay zona (išskyrus mygtukus)
+  overlay.addEventListener('pointerdown', (e)=>{
+    if (e.target.closest('button')) return;
     if (overlay.style.display !== 'flex') return;
     if (paused) togglePause();
     else jump();
