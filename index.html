@@ -299,9 +299,14 @@
   const MAX_SCALE_SCORE = 130;   // apie 130 taškų – ~2x greitis
   const SPEED_ACCEL = 800;       // kaip greitai prisitaiko prie target greičio
 
+  // Žaidėjo „hitboxas“
   const player = { x:60, y:GROUND_Y-40, w:34, h:40, vy:0, onGround:true };
   const obstacles = [];
   let spawnTimer = 0;
+
+  // 🔹 PNG žmogeliukas
+  const runnerImg = new Image();
+  runnerImg.src = "pubg-runner.png";
 
   function resetGame(){
     score = 0;
@@ -396,13 +401,27 @@
       roundRect(ctx, o.x, o.y, o.w, o.h, 4, true);
     }
 
-    // žaidėjas
-    ctx.fillStyle = '#ffffff';
-    roundRect(ctx, player.x, player.y, player.w, player.h, 6, true); // kūnas
-    ctx.fillStyle = '#0b1220';                                      // šalmas
-    ctx.fillRect(player.x+4, player.y+4, player.w-8, 10);
-    ctx.fillStyle = '#ffcc00';                                      // stiklas
-    ctx.fillRect(player.x+8, player.y+6, player.w-16, 6);
+    // ŽAIDĖJAS – PNG žmogeliukas
+    if (runnerImg.complete && runnerImg.naturalWidth){
+      const targetHeight = 70;                 // kiek maždaug px aukštis
+      const ratio = runnerImg.width / runnerImg.height;
+      const spriteH = targetHeight;
+      const spriteW = targetHeight * ratio;
+
+      // centravimas pagal hitboxą: hitbox apačia = kojų apačia
+      const drawX = player.x - (spriteW - player.w)/2;
+      const drawY = player.y - (spriteH - player.h);
+
+      ctx.drawImage(runnerImg, drawX, drawY, spriteW, spriteH);
+    } else {
+      // jei dar neužsikrovė – rodom seną kvadratą (fallback)
+      ctx.fillStyle = '#ffffff';
+      roundRect(ctx, player.x, player.y, player.w, player.h, 6, true);
+      ctx.fillStyle = '#0b1220';
+      ctx.fillRect(player.x+4, player.y+4, player.w-8, 10);
+      ctx.fillStyle = '#ffcc00';
+      ctx.fillRect(player.x+8, player.y+6, player.w-16, 6);
+    }
 
     if (paused){
       ctx.fillStyle = 'rgba(0,0,0,.35)';
