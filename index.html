@@ -6,59 +6,170 @@
 <title>Iki kito susitikimo</title>
 <style>
   :root{
-    --bg:#0f1724; --panel:#0b1220; --accent:#ffcc00; --muted:#bfc8d6;
+    --bg: #0f1724;
+    --panel: #0b1220;
+    --accent: #ffcc00;
+    --muted: #bfc8d6;
   }
   *{box-sizing:border-box}
   body{
-    margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
-    padding:2rem; font-family:Inter,Roboto,"Segoe UI",Arial,sans-serif;
-    background:linear-gradient(180deg,#071022 0%, #0d1a2a 100%); color:var(--muted);
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem;
+    font-family: Inter, Roboto, "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(180deg, #071022 0%, #0d1a2a 100%);
+    color:var(--muted);
   }
   .wrap{
-    width:100%; max-width:720px;
-    background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));
-    border-radius:14px; padding:4.5rem 2rem 2rem; box-shadow:0 10px 30px rgba(2,6,23,.7);
+    width:100%;
+    max-width:720px;
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    border-radius:14px;
+    padding:4.5rem 2rem 2rem;
+    box-shadow: 0 10px 30px rgba(2,6,23,.7);
     position:relative;
   }
   .logo{
-    position:absolute; left:50%; top:0; transform:translate(-50%,-50%);
-    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2);
-    padding:.75rem 1rem; border-radius:14px; backdrop-filter:blur(8px);
-    box-shadow:0 10px 30px rgba(0,0,0,.6);
+    position:absolute;
+    left:50%; top:0;
+    transform:translate(-50%,-50%);
+    background: rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,.2);
+    padding:0.75rem 1rem;
+    border-radius:14px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.6);
   }
-  .logo img{display:block; height:64px; width:auto}
+  .logo img{ display:block; height:64px; width:auto; }
 
-  h1{margin:0 0 .5rem 0; color:#fff; font-size:1.6rem; text-align:center;}
-  .countdown{display:flex; gap:12px; justify-content:center; margin:1rem 0 1.25rem; flex-wrap:wrap;}
-  .box{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01)); border-radius:10px; padding:12px 14px; min-width:92px; text-align:center;}
-  .num{color:#fff; font-weight:700; font-size:1.4rem; display:block}
-  .lbl{font-size:.78rem; color:var(--muted); margin-top:4px; display:block}
-  .date{ text-align:center; color:var(--muted); font-size:.98rem; border-top:1px solid rgba(255,255,255,.06); padding-top:1rem; margin-top:.25rem; }
-
-  .stats{ margin-top:1.5rem; border-top:1px solid rgba(255,255,255,.06); padding-top:1.25rem; }
-  .stats h2{ text-align:center; color:#fff; font-size:1.05rem; margin:0 0 .75rem 0;}
-  .search-form{ display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; }
-  .search-form input{ min-width:220px; padding:.6rem .8rem; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.06); color:#fff; }
-  .search-form button,.play-btn{
-    padding:.6rem 1rem; border-radius:10px; border:none; background:linear-gradient(90deg,#ffcc00,#ffb300);
-    color:#0b0b0b; font-weight:700; cursor:pointer;
+  h1{
+    margin:0 0 .5rem 0;
+    color:#fff;
+    font-size:1.6rem;
+    text-align:center;
   }
-  #pubgHint{text-align:center; font-size:.9rem; color:#bfc8d6; margin-top:.5rem;}
+  .countdown{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:1rem 0 1.25rem;
+    flex-wrap:wrap;
+  }
+  .box{
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    border-radius:10px;
+    padding:12px 14px;
+    min-width:92px;
+    text-align:center;
+  }
+  .num{ color:#fff; font-weight:700; font-size:1.4rem; display:block; }
+  .lbl{ font-size:.78rem; color:var(--muted); margin-top:4px; display:block; }
+  .date{
+    text-align:center; color:var(--muted); font-size:.98rem;
+    border-top:1px solid rgba(255,255,255,.06);
+    padding-top:1rem; margin-top:.25rem;
+  }
+
+  /* PUBG paieškos eilutė */
+  .stats{
+    margin-top:1.5rem;
+    border-top:1px solid rgba(255,255,255,.06);
+    padding-top:1.25rem;
+  }
+  .stats h2{
+    text-align:center;
+    color:#fff;
+    font-size:1.05rem;
+    margin:0 0 .75rem 0;
+  }
+  .search-form{
+    display:flex;
+    gap:.5rem;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .search-form input{
+    min-width:220px;
+    padding:.6rem .8rem;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.15);
+    background:rgba(255,255,255,.06);
+    color:#fff;
+  }
+  .search-form button,
+  .play-btn{
+    padding:.6rem 1rem;
+    border-radius:10px;
+    border:none;
+    background:linear-gradient(90deg,#ffcc00,#ffb300);
+    color:#0b0b0b;
+    font-weight:700;
+    cursor:pointer;
+  }
+  #pubgHint{
+    text-align:center;
+    font-size:.9rem;
+    color:#bfc8d6;
+    margin-top:.5rem;
+  }
 
   /* ---- Mini žaidimo overlay ---- */
   .overlay{
-    position:fixed; inset:0; background:rgba(5,10,18,.96);
-    display:none; align-items:center; justify-content:center; z-index:9999;
+    position:fixed;
+    inset:0;
+    background:rgba(5,10,18,.96);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
   }
   .game-wrap{
-    width:min(900px, 96vw); padding:1rem; border-radius:16px; background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
-    border:1px solid rgba(255,255,255,.06); box-shadow:0 10px 30px rgba(0,0,0,.7);
+    width:min(900px, 96vw);
+    padding:1rem;
+    border-radius:16px;
+    background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.06);
+    box-shadow:0 10px 30px rgba(0,0,0,.7);
   }
-  .game-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:.5rem; }
-  .badge{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); padding:.4rem .6rem; border-radius:10px; color:#fff; font-weight:700; }
-  .close-btn{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); color:#fff; padding:.45rem .8rem; border-radius:10px; cursor:pointer; }
-  canvas{ width:100%; height:auto; display:block; background:linear-gradient(180deg,#0f1724 0%, #0b1220 100%); border-radius:12px; }
-  .hint{ text-align:center; font-size:.9rem; color:#cfd7e3; margin-top:.5rem; }
+  .game-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:.5rem;
+  }
+  .badge{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    padding:.4rem .6rem;
+    border-radius:10px;
+    color:#fff;
+    font-weight:700;
+  }
+  .close-btn{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);
+    color:#fff;
+    padding:.45rem .8rem;
+    border-radius:10px;
+    cursor:pointer;
+  }
+  canvas{
+    width:100%;
+    height:auto;
+    display:block;
+    background:linear-gradient(180deg,#0f1724 0%, #0b1220 100%);
+    border-radius:12px;
+  }
+  .hint{
+    text-align:center;
+    font-size:.9rem;
+    color:#cfd7e3;
+    margin-top:.5rem;
+  }
 </style>
 </head>
 <body>
@@ -76,9 +187,9 @@
       <div class="box"><span class="num" id="seconds">--</span><span class="lbl">sek.</span></div>
     </section>
 
-    <p class="date">Susitikimas: <strong>2025-10-31 17:00</strong> – <strong>2025-11-02</strong></p>
+    <p class="date">Susitikimas: <strong>2025-11-21 17:00</strong> – <strong>2025-11-23</strong></p>
 
-    <!-- PUBG paieška -->
+    <!-- PUBG paieškos juosta -->
     <section class="stats">
       <h2>PUBG žaidėjo statistika</h2>
       <form id="pubgSearch" class="search-form">
@@ -88,7 +199,7 @@
       <p id="pubgHint"></p>
     </section>
 
-    <!-- Mygtukas atidaryti mini žaidimą -->
+    <!-- Mygtukas mini žaidimui -->
     <div style="display:flex;justify-content:center;margin-top:1rem;">
       <button class="play-btn" id="openGame">Į PUBG mini žaidimą</button>
     </div>
@@ -99,131 +210,164 @@
     <div class="game-wrap">
       <div class="game-top">
         <div class="badge">Taškai: <span id="score">0</span> | Rekordas: <span id="hiscore">0</span></div>
-        <div style="display:flex; gap:.5rem;">
+        <div style="display:flex;gap:.5rem;">
           <button class="close-btn" id="pauseBtn">⏸️ Pauzė (P)</button>
           <button class="close-btn" id="closeGame">✖ Užverti</button>
         </div>
       </div>
       <canvas id="game" width="900" height="260"></canvas>
-      <div class="hint">Šokimas: <b>Space</b> arba <b>↑</b> arba <b>palietimas</b>. – vesk per kliūtis, gauk taškų. 🎯</div>
+      <div class="hint">Šokimas: <b>Space</b> arba <b>↑</b> arba <b>palietimas</b>. – vesk per kliūtis, rink taškus 🎯</div>
     </div>
   </div>
 
 <script>
-  /* ===== COUNTDOWN iki 2025-10-31 17:00 (vietiniu laiku) ===== */
-  const target = new Date(2025, 9, 31, 17, 0, 0);
+  // ===== COUNTDOWN iki 2025-11-21 17:00 =====
+  // Skaičiuojama pagal žiūrinčiojo įrenginio laiko zoną.
+  const target = new Date(2025, 10, 21, 17, 0, 0); // 10 = lapkritis (mėnesiai 0-based)
   const titleEl = document.getElementById('title');
-  const el = { d: q('#days'), h: q('#hours'), m: q('#minutes'), s: q('#seconds') };
-  function q(s){ return document.querySelector(s); }
+  const el = {
+    d: document.getElementById('days'),
+    h: document.getElementById('hours'),
+    m: document.getElementById('minutes'),
+    s: document.getElementById('seconds'),
+  };
 
   function tick(){
-    const now = new Date(); let diff = target - now;
+    const now = new Date();
+    let diff = target - now;
+
     if (diff <= 0){
       titleEl.innerHTML = 'Susitikimas prasidėjo 🍺';
-      el.d.textContent = '0'; el.h.textContent = '00'; el.m.textContent = '00'; el.s.textContent = '00';
-      clearInterval(iv); return;
+      el.d.textContent = '0';
+      el.h.textContent = '00';
+      el.m.textContent = '00';
+      el.s.textContent = '00';
+      clearInterval(iv);
+      return;
     }
-    const t = Math.floor(diff/1000), d = Math.floor(t/86400),
-          h = Math.floor(t%86400/3600), m = Math.floor(t%3600/60), s = t%60;
-    el.d.textContent = d; el.h.textContent = String(h).padStart(2,'0');
-    el.m.textContent = String(m).padStart(2,'0'); el.s.textContent = String(s).padStart(2,'0');
-  }
-  tick(); const iv = setInterval(tick, 1000);
 
-  /* ===== PUBG paieška (OP.GG) ===== */
+    const total = Math.floor(diff/1000);
+    const d = Math.floor(total / 86400);
+    const h = Math.floor((total % 86400) / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+
+    el.d.textContent = d;
+    el.h.textContent = String(h).padStart(2,'0');
+    el.m.textContent = String(m).padStart(2,'0');
+    el.s.textContent = String(s).padStart(2,'0');
+  }
+  tick();
+  const iv = setInterval(tick, 1000);
+
+  // ===== PUBG paieška (atidaro pubg.op.gg) =====
   document.getElementById('pubgSearch').addEventListener('submit', function(e){
     e.preventDefault();
     const name = document.getElementById('pubgName').value.trim();
     const hint = document.getElementById('pubgHint');
-    if(!name){ hint.textContent = 'Įrašyk žaidėjo vardą (niką).'; return; }
+
+    if(!name){
+      hint.textContent = 'Įrašyk žaidėjo vardą (niką).';
+      return;
+    }
+
     const url = `https://pubg.op.gg/user/${encodeURIComponent(name)}`;
     hint.innerHTML = `Atidaroma: <a href="${url}" target="_blank" rel="noopener" style="color:#ffcc00">${url}</a>`;
     window.open(url, '_blank', 'noopener');
   });
 
   /* ===== MINI ŽAIDIMAS (Canvas „runner“) ===== */
-  const overlay = q('#gameOverlay'), openBtn = q('#openGame'), closeBtn = q('#closeGame'), pauseBtn = q('#pauseBtn');
-  const cvs = q('#game'), ctx = cvs.getContext('2d');
+  const overlay = document.getElementById('gameOverlay');
+  const openBtn = document.getElementById('openGame');
+  const closeBtn = document.getElementById('closeGame');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const cvs = document.getElementById('game');
+  const ctx = cvs.getContext('2d');
+  const scoreEl = document.getElementById('score');
+  const hiscoreEl = document.getElementById('hiscore');
+
   let running = false, paused = false, raf = null, lastT = 0;
-  let score = 0, hiscore = Number(localStorage.getItem('runner_hiscore')||0);
-  q('#hiscore').textContent = hiscore;
+  let score = 0, hiscore = Number(localStorage.getItem('runner_hiscore') || 0);
+  hiscoreEl.textContent = hiscore;
 
-  // Fiziniai parametrai
-  const GROUND_Y = cvs.height - 40;          // žemė
-  const GRAV = 2000;                          // gravitacija px/s^2
-  const JUMP_V = -700;                        // šuolio greitis px/s
-  let speed = 300;                             // pasaulio greitis px/s
-  const speedGain = 0.2;                      // kiek spartėja per sekundę
+  const GROUND_Y = cvs.height - 40;
+  const GRAV = 2000;
+  const JUMP_V = -700;
+  let speed = 300;
+  const speedGain = 0.2;
 
-  // Žaidėjo objektas
-  const player = { x: 60, y: GROUND_Y-40, w: 34, h: 40, vy: 0, onGround: true };
-  // Kliūtys
+  const player = { x:60, y:GROUND_Y-40, w:34, h:40, vy:0, onGround:true };
   const obstacles = [];
   let spawnTimer = 0;
 
   function resetGame(){
-    score = 0; speed = 300; spawnTimer = 0; player.y = GROUND_Y-40; player.vy=0; player.onGround=true;
+    score = 0; speed = 300; spawnTimer = 0;
+    player.y = GROUND_Y-40; player.vy = 0; player.onGround = true;
     obstacles.length = 0; lastT = performance.now();
+    scoreEl.textContent = score;
   }
 
   function jump(){
     if (!running || paused) return;
     if (player.onGround){
-      player.vy = JUMP_V; player.onGround = false;
+      player.vy = JUMP_V;
+      player.onGround = false;
     }
   }
 
   function spawnObstacle(){
-    // atsitiktinės „dėžės“ 20–36 px aukščio, 20–36 px pločio
     const h = 20 + Math.floor(Math.random()*16);
     const w = 20 + Math.floor(Math.random()*16);
-    obstacles.push({ x: cvs.width + 20, y: GROUND_Y - h, w, h, passed:false });
+    obstacles.push({ x:cvs.width+20, y:GROUND_Y-h, w, h, passed:false });
   }
 
   function update(dt){
-    // greitėjimas
     speed += speedGain * dt;
 
-    // žaidėjas
     player.vy += GRAV * dt;
     player.y += player.vy * dt;
     if (player.y >= GROUND_Y - player.h){
-      player.y = GROUND_Y - player.h; player.vy = 0; player.onGround = true;
+      player.y = GROUND_Y - player.h;
+      player.vy = 0;
+      player.onGround = true;
     }
 
-    // kliūtys
     spawnTimer -= dt;
     if (spawnTimer <= 0){
       spawnObstacle();
-      spawnTimer = 0.9 + Math.random()*0.9; // kas 0.9–1.8 s
+      spawnTimer = 0.9 + Math.random()*0.9;
     }
+
     for (const o of obstacles){
       o.x -= speed * dt;
-      // praėjo – taškas
+
       if (!o.passed && o.x + o.w < player.x){
-        o.passed = true; score++; q('#score').textContent = score;
+        o.passed = true;
+        score++;
+        scoreEl.textContent = score;
       }
-      // susidūrimas
+
       if (rectsCollide(player, o)){
         gameOver();
         return;
       }
     }
-    // išvalom senus
-    while (obstacles.length && obstacles[0].x + obstacles[0].w < -10) obstacles.shift();
+
+    while (obstacles.length && obstacles[0].x + obstacles[0].w < -10){
+      obstacles.shift();
+    }
   }
 
   function draw(){
-    // fonas
-    ctx.clearRect(0,0,cvs.width,cvs.height);
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
 
     // žemė
     ctx.fillStyle = '#152337';
     ctx.fillRect(0, GROUND_Y, cvs.width, 4);
 
-    // „paralakso“ juostos
+    // foninės juostos
     ctx.fillStyle = 'rgba(255,255,255,.05)';
-    for (let i=0;i<6;i++){
+    for (let i=0; i<6; i++){
       const x = (i*180 - (performance.now()/20)%180);
       ctx.fillRect(x, GROUND_Y-18, 120, 2);
     }
@@ -234,28 +378,24 @@
       roundRect(ctx, o.x, o.y, o.w, o.h, 4, true);
     }
 
-    // žaidėjas (karys su šalmu – stilizuota figūra)
-    // kūnas
+    // žaidėjas
     ctx.fillStyle = '#ffffff';
-    roundRect(ctx, player.x, player.y, player.w, player.h, 6, true);
-    // šalmas
-    ctx.fillStyle = '#0b1220';
+    roundRect(ctx, player.x, player.y, player.w, player.h, 6, true); // kūnas
+    ctx.fillStyle = '#0b1220';                                      // šalmas
     ctx.fillRect(player.x+4, player.y+4, player.w-8, 10);
-    // veido „stiklas“
-    ctx.fillStyle = '#ffcc00';
+    ctx.fillStyle = '#ffcc00';                                      // stiklas
     ctx.fillRect(player.x+8, player.y+6, player.w-16, 6);
 
-    // tekstas, jei pauzė
     if (paused){
       ctx.fillStyle = 'rgba(0,0,0,.35)';
       ctx.fillRect(0,0,cvs.width,cvs.height);
-      drawCenterText('Pauzė — paspausk P arba TAP, kad tęsti', 16);
+      drawCenterText('Pauzė — P arba TAP, kad tęsti', 16);
     }
   }
 
   function loop(ts){
-    if (!running){ return; }
-    const dt = Math.min(0.05, (ts - lastT)/1000); // iki 50 ms
+    if (!running) return;
+    const dt = Math.min(0.05, (ts - lastT)/1000);
     lastT = ts;
     if (!paused){
       update(dt);
@@ -268,9 +408,9 @@
     return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
   }
 
-  function drawCenterText(text, size=18){
+  function drawCenterText(text, size){
     ctx.fillStyle = '#fff';
-    ctx.font = `bold ${size}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+    ctx.font = `bold ${size}px system-ui,-apple-system,Segoe UI,Roboto,Arial`;
     ctx.textAlign = 'center';
     ctx.fillText(text, cvs.width/2, cvs.height/2);
   }
@@ -278,25 +418,40 @@
   function gameOver(){
     running = false;
     cancelAnimationFrame(raf);
-    // užtamsinti ir pranešimas
     ctx.fillStyle = 'rgba(0,0,0,.55)';
     ctx.fillRect(0,0,cvs.width,cvs.height);
     drawCenterText(`Game Over — taškai: ${score}`, 22);
-    setTimeout(()=>drawCenterText('Paspausk SPACE / TAP, kad žaistum dar kartą', 16), 50);
+    setTimeout(()=>drawCenterText('Space/↑ arba TAP — dar kartą', 16), 60);
 
-    if (score > hiscore){ hiscore = score; localStorage.setItem('runner_hiscore', String(hiscore)); q('#hiscore').textContent = hiscore; }
+    if (score > hiscore){
+      hiscore = score;
+      localStorage.setItem('runner_hiscore', String(hiscore));
+      hiscoreEl.textContent = hiscore;
+    }
 
-    // leist greitai restartuoti
-    const once = ()=>{ startGame(); window.removeEventListener('keydown',onceKey); cvs.removeEventListener('pointerdown',once); };
-    const onceKey = (e)=>{ if (e.code==='Space' || e.code==='ArrowUp') once(); };
-    window.addEventListener('keydown', onceKey, { once:true });
-    cvs.addEventListener('pointerdown', once, { once:true });
+    const restartKey = (e)=>{
+      if (e.code==='Space' || e.code==='ArrowUp'){
+        window.removeEventListener('keydown', restartKey);
+        cvs.removeEventListener('pointerdown', restartTap);
+        startGame();
+      }
+    };
+    const restartTap = ()=>{
+      window.removeEventListener('keydown', restartKey);
+      cvs.removeEventListener('pointerdown', restartTap);
+      startGame();
+    };
+    window.addEventListener('keydown', restartKey);
+    cvs.addEventListener('pointerdown', restartTap);
   }
 
   function startGame(){
     resetGame();
-    running = true; paused = false; q('#score').textContent = 0;
-    lastT = performance.now(); raf = requestAnimationFrame(loop);
+    running = true;
+    paused = false;
+    pauseBtn.textContent = '⏸️ Pauzė (P)';
+    lastT = performance.now();
+    raf = requestAnimationFrame(loop);
   }
 
   function togglePause(){
@@ -309,23 +464,35 @@
   openBtn.addEventListener('click', ()=>{
     overlay.style.display = 'flex';
     overlay.setAttribute('aria-hidden','false');
-    setTimeout(()=>{ startGame(); }, 50);
+    setTimeout(startGame, 50);
   });
+
   closeBtn.addEventListener('click', ()=>{
-    running = false; cancelAnimationFrame(raf);
-    overlay.style.display = 'none'; overlay.setAttribute('aria-hidden','true');
+    running = false;
+    cancelAnimationFrame(raf);
+    overlay.style.display = 'none';
+    overlay.setAttribute('aria-hidden','true');
   });
+
   pauseBtn.addEventListener('click', togglePause);
 
-  // valdymas: Space/ArrowUp arba TAP
-  window.addEventListener('keydown',(e)=>{
-    if (overlay.style.display!=='flex') return;
-    if (e.code==='Space' || e.code==='ArrowUp'){ e.preventDefault(); jump(); }
-    if (e.code==='KeyP'){ togglePause(); }
+  window.addEventListener('keydown', (e)=>{
+    if (overlay.style.display !== 'flex') return;
+    if (e.code === 'Space' || e.code === 'ArrowUp'){
+      e.preventDefault();
+      jump();
+    }
+    if (e.code === 'KeyP'){
+      togglePause();
+    }
   });
-  cvs.addEventListener('pointerdown', ()=>{ if (overlay.style.display==='flex'){ if (paused) togglePause(); else jump(); } });
 
-  // utility – apvalinti stačiakampiai
+  cvs.addEventListener('pointerdown', ()=>{
+    if (overlay.style.display !== 'flex') return;
+    if (paused) togglePause();
+    else jump();
+  });
+
   function roundRect(ctx, x, y, w, h, r, fill){
     const rr = Math.min(r, w/2, h/2);
     ctx.beginPath();
