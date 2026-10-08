@@ -8,6 +8,7 @@ async function openAt(time, viewport = { width:390, height:844 }) {
   const context = await browser.newContext({ viewport, timezoneId:'America/New_York' });
   const page = await context.newPage();
   page.on('pageerror', e => errors.push(e.message));
+  await page.route('**/config.js', route => route.fulfill({ contentType:'text/javascript', body:'window.SQUAD_CONFIG={supabaseUrl:"",supabaseKey:""};' }));
   await page.clock.install({ time: new Date(time) });
   await page.goto('http://127.0.0.1:4173');
   await page.locator('.player-name').first().waitFor({ state:'attached' });

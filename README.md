@@ -15,7 +15,11 @@ Keturių draugų susitikimų puslapis, skirtas atidaryti telefonu iš NFC žeton
 
 ## Dabartinė būsena
 
-**Peržiūra, kol neprijungtas Supabase.** Kai `config.js` reikšmės tuščios, puslapis aiškiai pažymėtas kaip V1 peržiūra. Pakeitimai saugomi tik toje naršyklėje ir nėra siunčiami kitiems žmonėms. Nepublikuoti kaip užbaigtos bendros versijos, kol neatlikti žemiau esantys prijungimo ir gyvo ryšio patikrinimai.
+**Supabase prijungtas prie PUBG projekto (`elydoynuodcpdzaufcnp`).** Schema, šeši susitikimai, keturi žaidėjai ir Realtime publikacija įdiegti. Gyvai patikrintas duomenų ir serverio laiko skaitymas bei viešų lankytojų redagavimo užraktas. Supabase saugumo patikra be pastabų.
+
+Dar reikia sukurti organizatoriaus Auth paskyrą, suteikti jai teises ir patikrinti prisijungimą bei gyvą išsaugojimą. Iki tol šaka lieka peržiūrai; `main` ir viešas GitHub Pages puslapis nepakeisti.
+
+Jeigu `config.js` reikšmės tuščios, įsijungia aiškiai pažymėta vietinė V1 peržiūra. Tokiu režimu pakeitimai saugomi tik toje naršyklėje. Automatiniai naršyklės testai šį režimą pasirenka patys, todėl gyvų duomenų nekeičia.
 
 ## Prijungimas
 
@@ -44,6 +48,8 @@ npm run serve
 Peržiūra: `http://127.0.0.1:4173`. Naršyklės testams atskirame terminale: `npm run test:browser`. Pagal nutylėjimą naudojamas įdiegtas Microsoft Edge; kitam Playwright kanalui nustatykite `BROWSER_CHANNEL`. Testų vaizdai saugomi ignoruojamame `.qa/` aplanke.
 
 Naršyklės testai tikrina 320, 390, 430 ir 1440 px ekranus, nustatymus, validaciją, saugų teksto rodymą, laiko ribas ir seną mini žaidimą. Sinchronizavimo naršyklės testas naudoja imituotą Supabase API; atskiras PGlite testas tikrina SQL ir RLS realiame PostgreSQL variklyje. Tai nepakeičia gyvo prijungto Supabase projekto patikrinimo.
+
+`npm run test:live` atlieka tik skaitymo patikrą su `config.js` nurodytu gyvu projektu. Tikrina duomenis, laiką, organizatorių lentelės apsaugą ir mobiliojo puslapio prisijungimą prie duomenų bazės; duomenų nekeičia.
 
 `assets/app.js` yra sukompiliuotas `src/app.mjs` ir priklausomybių rezultatas. Pakeitus šaltinius paleisti `npm run build` ir įkelti atnaujintą failą. GitHub Pages papildomo serverio ar npm paleidimo nereikia.
 

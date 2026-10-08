@@ -41,6 +41,9 @@ exception when others then return false;
 end;
 $$;
 
+revoke all on function public.valid_squad_data(jsonb) from public, anon, authenticated;
+grant execute on function public.valid_squad_data(jsonb) to authenticated;
+
 create table if not exists public.squad_state (
   id text primary key check (id = 'squad'),
   data jsonb not null check (public.valid_squad_data(data)),
@@ -96,6 +99,13 @@ do $$ begin
   if exists (select 1 from pg_publication where pubname = 'supabase_realtime')
     and not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'squad_state') then
     alter publication supabase_realtime add table public.squad_state;
+  end if;
+end $$;
+
+-- The Dashboard's optional automatic-RLS event trigger is not a public RPC.
+do $$ begin
+  if to_regprocedure('public.rls_auto_enable()') is not null then
+    revoke all on function public.rls_auto_enable() from public, anon, authenticated;
   end if;
 end $$;
 commit;
