@@ -17,7 +17,7 @@ Keturių draugų susitikimų puslapis, skirtas atidaryti telefonu iš NFC žeton
 
 **Supabase prijungtas prie PUBG projekto (`elydoynuodcpdzaufcnp`).** Schema, šeši susitikimai, keturi žaidėjai ir Realtime publikacija įdiegti. Gyvai patikrintas duomenų ir serverio laiko skaitymas bei viešų lankytojų redagavimo užraktas. Supabase saugumo patikra be pastabų.
 
-Organizatoriaus Auth paskyra sukurta, patvirtinta ir turi valdymo teises. Gyvoje duomenų bazėje patikrintas išsaugojimas su organizatoriaus teisėmis, bandymo operaciją atšaukiant. Naršyklės prisijungimo ir bendrų pakeitimų scenarijai patikrinti su imituota API; pirmą asmeninį prisijungimą ir išsaugojimą organizatorius dar turi atlikti pats. V1 skirta esamam adresui https://nfc-tag-info.github.io/pubg/.
+V1 paskelbta adresu https://nfc-tag-info.github.io/pubg/. Organizatoriaus Auth paskyra sukurta, patvirtinta ir turi valdymo teises. Patvirtintas tikras organizatoriaus prisijungimas ir išsaugojimas: pakeista susitikimo valanda ir dalyvių būsenos matomos atskiroje viešo puslapio naršyklės sesijoje. GitHub Pages diegimas ir viešo puslapio automatinė patikra sėkmingi.
 
 Jeigu `config.js` reikšmės tuščios, įsijungia aiškiai pažymėta vietinė V1 peržiūra. Tokiu režimu pakeitimai saugomi tik toje naršyklėje. Automatiniai naršyklės testai šį režimą pasirenka patys, todėl gyvų duomenų nekeičia.
 
