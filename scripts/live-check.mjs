@@ -21,7 +21,7 @@ const errors = [];
 try {
   const page = await browser.newPage({viewport:{width:390,height:844},timezoneId:'America/New_York'});
   page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://127.0.0.1:4173');
+  await page.goto(process.env.SQUAD_TEST_URL || 'http://127.0.0.1:4173');
   await page.waitForFunction(()=>document.querySelector('#connection').textContent==='● Komandos duomenys atnaujinti');
   assert.deepEqual(await page.locator('.player-name').allTextContents(), row.data.players.map(p=>p.nick));
   await page.screenshot({path:'.qa/live-connected.png'});

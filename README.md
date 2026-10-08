@@ -17,7 +17,7 @@ Keturių draugų susitikimų puslapis, skirtas atidaryti telefonu iš NFC žeton
 
 **Supabase prijungtas prie PUBG projekto (`elydoynuodcpdzaufcnp`).** Schema, šeši susitikimai, keturi žaidėjai ir Realtime publikacija įdiegti. Gyvai patikrintas duomenų ir serverio laiko skaitymas bei viešų lankytojų redagavimo užraktas. Supabase saugumo patikra be pastabų.
 
-Dar reikia sukurti organizatoriaus Auth paskyrą, suteikti jai teises ir patikrinti prisijungimą bei gyvą išsaugojimą. Iki tol šaka lieka peržiūrai; `main` ir viešas GitHub Pages puslapis nepakeisti.
+Organizatoriaus Auth paskyra sukurta, patvirtinta ir turi valdymo teises. Gyvoje duomenų bazėje patikrintas išsaugojimas su organizatoriaus teisėmis, bandymo operaciją atšaukiant. Naršyklės prisijungimo ir bendrų pakeitimų scenarijai patikrinti su imituota API; pirmą asmeninį prisijungimą ir išsaugojimą organizatorius dar turi atlikti pats. V1 skirta esamam adresui https://nfc-tag-info.github.io/pubg/.
 
 Jeigu `config.js` reikšmės tuščios, įsijungia aiškiai pažymėta vietinė V1 peržiūra. Tokiu režimu pakeitimai saugomi tik toje naršyklėje. Automatiniai naršyklės testai šį režimą pasirenka patys, todėl gyvų duomenų nekeičia.
 
@@ -29,7 +29,7 @@ Jeigu `config.js` reikšmės tuščios, įsijungia aiškiai pažymėta vietinė 
 4. Tik SQL Editor suteikti vartotojui organizatoriaus teises: `insert into public.squad_admins (user_id) values ('VARTOTOJO-UUID') on conflict do nothing;`.
 5. Į `config.js` įrašyti projekto URL ir **publishable key** arba viešą `anon` raktą. Niekada nerašyti `service_role`, slaptažodžių ar kitų administravimo raktų.
 6. Patikrinti prisijungimą ir išsaugojimą dviejuose atskiruose įrenginiuose. Būsenos platinamos per Realtime; atsarginis atnaujinimas kas 15 s, tik kol puslapis matomas. Serverio laikas sulyginamas periodiškai ir grįžus į puslapį. Tai sekundžių rodymas, ne garantuotas laikrodžių sutapimas per prastą ryšį.
-7. Tik užbaigus prijungimą sujungti V1 šaką su `main`. Esamas GitHub Pages adresas ir NFC žetonai gali likti tie patys.
+7. Sujungus V1 šaką su `main`, patikrinti viešą puslapį ir pirmą organizatoriaus prisijungimą. Esamas GitHub Pages adresas ir NFC žetonai lieka tie patys.
 
 Supabase RLS leidžia viešai skaityti komandos duomenis, bet rašyti tik į `squad_admins` įtrauktiems naudotojams. Teisių lentelės iš naršyklės papildyti negalima. Neprisijungę ir paprasti prisijungę naudotojai rašyti negali. Iki ryšio patvirtinimo realus išsaugojimas išjungtas. Ryšiui nutrūkus rodomi paskutiniai gauti duomenys su aiškiu įspėjimu.
 
@@ -49,7 +49,7 @@ Peržiūra: `http://127.0.0.1:4173`. Naršyklės testams atskirame terminale: `n
 
 Naršyklės testai tikrina 320, 390, 430 ir 1440 px ekranus, nustatymus, validaciją, saugų teksto rodymą, laiko ribas ir seną mini žaidimą. Sinchronizavimo naršyklės testas naudoja imituotą Supabase API; atskiras PGlite testas tikrina SQL ir RLS realiame PostgreSQL variklyje. Tai nepakeičia gyvo prijungto Supabase projekto patikrinimo.
 
-`npm run test:live` atlieka tik skaitymo patikrą su `config.js` nurodytu gyvu projektu. Tikrina duomenis, laiką, organizatorių lentelės apsaugą ir mobiliojo puslapio prisijungimą prie duomenų bazės; duomenų nekeičia.
+`npm run test:live` atlieka tik skaitymo patikrą su `config.js` nurodytu gyvu projektu. Tikrina duomenis, laiką, organizatorių lentelės apsaugą ir mobiliojo puslapio prisijungimą prie duomenų bazės; duomenų nekeičia. Aplinkos kintamasis `SQUAD_TEST_URL` leidžia tikrinti paskelbtą svetainę vietoje vietinės peržiūros.
 
 `assets/app.js` yra sukompiliuotas `src/app.mjs` ir priklausomybių rezultatas. Pakeitus šaltinius paleisti `npm run build` ir įkelti atnaujintą failą. GitHub Pages papildomo serverio ar npm paleidimo nereikia.
 
