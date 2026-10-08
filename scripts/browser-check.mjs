@@ -1,0 +1,85 @@
+import { chromium } from 'playwright';
+import { mkdir } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+await mkdir('.qa', { recursive: true });
+const browser = await chromium.launch({ channel: process.env.BROWSER_CHANNEL || 'msedge', headless: true });
+const errors = [];
+async function openAt(time, viewport = { width:390, height:844 }) {
+  const context = await browser.newContext({ viewport, timezoneId:'America/New_York' });
+  const page = await context.newPage();
+  page.on('pageerror', e => errors.push(e.message));
+  await page.route('**/config.js', route => route.fulfill({ contentType:'text/javascript', body:'window.SQUAD_CONFIG={supabaseUrl:"",supabaseKey:""};' }));
+  await page.clock.install({ time: new Date(time) });
+  await page.goto('http://127.0.0.1:4173');
+  await page.locator('.player-name').first().waitFor({ state:'attached' });
+  return { context, page };
+}
+try {
+  const { context, page } = await openAt('2026-10-08T09:00:00Z');
+  assert.deepEqual(await page.locator('.player-name').allTextContents(), ['Gintux','Obas','Vipux','Gitoshi']);
+  assert.match(await page.locator('#meeting-start').textContent(), /14:00/);
+  assert.equal(await page.locator('#days').textContent(), '01');
+  await page.screenshot({ path:'.qa/lobby-mobile.png', fullPage:true });
+  await page.getByRole('button', { name:'Atidaryti nustatymus' }).click();
+  await page.locator('#status-p1').selectOption('ready');
+  await page.locator('#status-p4').selectOption('absent');
+  await page.locator('#nick-p2').fill('Obas V1');
+  await page.locator('#meeting-select').selectOption('m2');
+  assert.equal(await page.locator('#status-p1').inputValue(), 'waiting');
+  await page.locator('#meeting-select').selectOption('m1');
+  assert.equal(await page.locator('#status-p1').inputValue(), 'ready');
+  await page.locator('#save-button').click();
+  assert.match(await page.locator('#feedback').textContent(), /tik šio įrenginio/);
+  await page.locator('#settings').evaluate(el => { el.scrollTop = 0; });
+  await page.screenshot({ path:'.qa/settings-mobile.png', fullPage:true });
+  await page.locator('#close-settings').click();
+  assert.match(await page.locator('.player').nth(0).textContent(), /READY/);
+  assert.match(await page.locator('.player').nth(3).textContent(), /NOT CONNECTED/);
+  await page.screenshot({ path:'.qa/lobby-statuses-mobile.png', fullPage:true });
+  await page.reload();
+  assert.equal(await page.locator('.player-name').nth(1).textContent(), 'Obas V1');
+  await page.locator('#open-settings').click();
+  await page.locator('#departure-input').fill('2026-10-09T13:00');
+  await page.locator('#save-button').click();
+  assert.match(await page.locator('#feedback').textContent(), /vėliau/);
+  await page.locator('#reset-form').click();
+  await page.locator('#nick-p1').fill('<b>Gintux</b>');
+  await page.locator('#save-button').click();
+  await page.locator('#close-settings').click();
+  assert.equal(await page.locator('.player-name').first().textContent(), '<b>Gintux</b>');
+  assert.equal(await page.locator('.player-name b').count(), 0);
+  await context.close();
+  console.log('PASS settings, per-meeting attendance, reload, invalid dates, safe nickname text');
+
+  const boundary = await openAt('2026-10-09T10:59:59Z');
+  await boundary.page.clock.fastForward(1200);
+  assert.equal(await boundary.page.locator('#loading').isVisible(), true);
+  await boundary.page.screenshot({ path:'.qa/loading-mobile.png' });
+  await boundary.page.clock.fastForward(2300);
+  assert.equal(await boundary.page.locator('#loading').isVisible(), false);
+  assert.match(await boundary.page.locator('#stage').getAttribute('class'), /active/);
+  await boundary.page.waitForTimeout(1100);
+  await boundary.page.screenshot({ path:'.qa/active-mobile.png' });
+  await boundary.page.clock.fastForward(50 * 3600000);
+  assert.match(await boundary.page.locator('#meeting-start').textContent(), /lapkričio/);
+  await boundary.context.close();
+  console.log('PASS exact arrival, loading, active weekend, automatic next meeting');
+  const ended = await openAt('2027-03-14T14:00:00Z');
+  assert.match(await ended.page.locator('#stage').getAttribute('class'), /ended/);
+  await ended.page.screenshot({ path:'.qa/ended-mobile.png' });
+  await ended.context.close();
+  for (const viewport of [{width:320,height:568},{width:430,height:932},{width:1440,height:900}]) {
+    const sized = await openAt('2026-10-08T09:00:00Z', viewport);
+    assert.equal(await sized.page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+    await sized.page.screenshot({path:`.qa/lobby-${viewport.width}.png`});
+    await sized.page.locator('#open-settings').click();
+    assert.equal(await sized.page.locator('#settings').evaluate(el => el.scrollWidth > el.clientWidth), false);
+    await sized.context.close();
+  }
+  const old = await browser.newPage(); old.on('pageerror', e => errors.push(e.message));
+  await old.goto('http://127.0.0.1:4173/legacy.html');
+  await old.locator('#openGame').click();
+  assert.equal(await old.locator('#gameOverlay').isVisible(), true);
+  assert.deepEqual(errors, []);
+  console.log('PASS season end, narrow/wide layouts, legacy mini game; no browser errors');
+} finally { await browser.close(); }

@@ -1,0 +1,22 @@
+{
+  "name": "squad-weekends",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "serve": "node scripts/serve.mjs",
+    "test:database": "node scripts/database-check.mjs",
+    "test:live": "node scripts/live-check.mjs",
+    "test:browser": "node scripts/browser-check.mjs && node scripts/sync-check.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.102.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "esbuild": "0.25.12",
+    "playwright": "1.64.0"
+  }
+}
