@@ -1,0 +1,32 @@
+import { PGlite } from '@electric-sql/pglite';
+import { readFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import { makeDefaultData } from '../src/model.mjs';
+const db = new PGlite();
+try {
+  await db.exec(`create role anon; create role authenticated; create schema auth;
+    create table auth.users (id uuid primary key);
+    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+    grant usage on schema auth to anon, authenticated;
+    insert into auth.users values ('11111111-1111-4111-8111-111111111111'),('22222222-2222-4222-8222-222222222222');`);
+  await db.exec(await readFile('supabase/schema.sql', 'utf8'));
+  await db.exec(await readFile('supabase/seed.sql', 'utf8'));
+  await db.exec("insert into public.squad_admins values ('11111111-1111-4111-8111-111111111111');");
+  await db.exec('set role anon');
+  assert.equal((await db.query('select * from public.squad_state')).rows.length, 1);
+  await assert.rejects(db.query("select public.save_squad(0, '{}'::jsonb)"));
+  await assert.rejects(db.query("update public.squad_state set data = '{}'::jsonb"));
+  await assert.rejects(db.query('select * from public.squad_admins'));
+  await db.exec("reset role; set role authenticated; set request.jwt.claim.sub = '22222222-2222-4222-8222-222222222222'");
+  assert.equal((await db.query('select * from public.squad_admins')).rows.length, 0);
+  await assert.rejects(db.query('select * from public.save_squad($1, $2)', [0, makeDefaultData()]));
+  await assert.rejects(db.query("insert into public.squad_admins values ('22222222-2222-4222-8222-222222222222')"));
+  await db.exec("set request.jwt.claim.sub = '11111111-1111-4111-8111-111111111111'");
+  const changed = makeDefaultData(); changed.players[0].nick = 'Gintux test';
+  assert.equal((await db.query('select * from public.save_squad($1,$2)', [0, changed])).rows[0].version, 1);
+  await assert.rejects(db.query('select * from public.save_squad($1,$2)', [0, changed]), /State changed/);
+  changed.meetings[1].start = changed.meetings[0].start;
+  await assert.rejects(db.query('select * from public.save_squad($1,$2)', [1, changed]), /check constraint/);
+  assert.equal((await db.query('select version from public.squad_state')).rows[0].version, 1);
+  console.log('PASS real PostgreSQL validation, public reads, admin-only writes, role isolation and concurrent-save conflict');
+} finally { await db.close(); }

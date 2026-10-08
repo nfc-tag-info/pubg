@@ -1,0 +1,5 @@
+node_modules/
+.qa/
+assets/*-source.png
+.env*
+!.env.example
