@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { validateSnapshot } from './snapshot.mjs';
 import { makeDefaultData, validateData, getPhase, countdown, formatDate, localDateTime, vilniusToISO, STATUSES } from './model.mjs';
 
 const $ = id => document.getElementById(id);
@@ -9,6 +10,7 @@ try { if (configured) client = createClient(config.supabaseUrl, config.supabaseK
 const demo = !configured;
 const cacheKey = 'squad-v1-cache:' + (config.supabaseUrl || 'preview');
 let data = makeDefaultData(), version = null, hasRemote = false, connected = false;
+let backupSource = false, backupUpdatedAt = null;
 let draft, draftVersion, selectedId, dirty = false, saving = false, admin = false, session = null;
 let previewMode = null, lastPhaseKey = '', loadingTimer, phase;
 let clockAnchor = Date.now(), clockAt = performance.now(), clockSynced = false;
@@ -17,11 +19,14 @@ function now() { return clockAnchor + performance.now() - clockAt; }
 function storageRead() {
   try {
     const cached = JSON.parse(localStorage.getItem(cacheKey));
-    if (cached) { data = validateData(cached.data); version = cached.version; }
+    if (cached && (demo || Number.isSafeInteger(cached.version) && cached.version >= 0)) {
+      data = validateData(cached.data); version = cached.version;
+      backupSource = cached.backupSource === true; backupUpdatedAt = cached.backupUpdatedAt || null;
+    }
   } catch { /* A damaged or unavailable cache must not stop the countdown. */ }
 }
 function storageWrite() {
-  try { localStorage.setItem(cacheKey, JSON.stringify({ data, version })); } catch { /* Read-only/private browsing. */ }
+  try { localStorage.setItem(cacheKey, JSON.stringify({ data, version, backupSource, backupUpdatedAt })); } catch { /* Read-only/private browsing. */ }
 }
 storageRead();
 function feedback(message = '', success = false) {
@@ -33,8 +38,9 @@ function connectionLabel() {
   el.className = 'connection' + (demo ? ' demo' : !connected ? ' error' : '');
   el.textContent = demo ? 'V1 PERŽIŪRA · tik šiame įrenginyje'
     : !client ? 'Nepavyko prijungti nustatymų'
-    : !connected ? (version === null ? 'Ryšio nėra · datos nepatvirtintos' : 'Ryšio nėra · paskutiniai gauti duomenys')
+    : !connected ? (version === null ? 'Ryšio nėra · datos nepatvirtintos' : backupSource ? 'Atsarginis grafikas · nėra ryšio su serveriu' : 'Ryšio nėra · paskutiniai gauti duomenys')
     : clockSynced ? '● Komandos duomenys atnaujinti' : '● Duomenys atnaujinti · telefono laikas';
+  el.title = !connected && backupSource && backupUpdatedAt ? 'Grafiko pakeitimas: ' + formatDate(backupUpdatedAt, true) : '';
 }
 const plugSVG = '<svg class="plug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3v5m8-5v5M6 8h12v4a6 6 0 0 1-6 6v4M6 12a6 6 0 0 0 6 6M3 3l18 18"/></svg>';
 function renderPlayers(meeting) {
@@ -181,8 +187,26 @@ function acceptRow(row) {
   if (!Number.isSafeInteger(row.version) || row.version < 0) throw new Error('Invalid server version');
   if (hasRemote && version !== null && row.version < version) return;
   data = row.data; version = row.version; hasRemote = true; connected = true;
+  backupSource = false; backupUpdatedAt = null;
   storageWrite(); render(true); updateAccess();
   if ($('settings').open && !dirty && !saving) resetDraft(selectedId);
+}
+async function loadSnapshot() {
+  if (demo) return;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  try {
+    const response = await fetch('squad-snapshot.json', { cache: 'no-cache', signal: controller.signal });
+    if (!response.ok) return;
+    const snapshot = validateSnapshot(await response.json(), config.supabaseUrl);
+    // A delayed snapshot must never replace a live response or a newer device cache.
+    if (hasRemote || (version !== null && snapshot.version <= version)) return;
+    data = snapshot.data; version = snapshot.version;
+    backupSource = true; backupUpdatedAt = snapshot.updatedAt;
+    storageWrite(); render(true); updateAccess();
+    if ($('settings').open && !dirty && !saving) resetDraft(selectedId);
+  } catch { /* Preserve the last valid cache when the snapshot is missing or damaged. */ }
+  finally { clearTimeout(timeout); }
 }
 async function syncClock() {
   const start = performance.now();
@@ -234,6 +258,7 @@ window.addEventListener('online', () => refresh());
 document.addEventListener('visibilitychange', () => { if (!document.hidden) { lastClockSync = 0; render(); refresh(); } });
 setInterval(() => { if (!document.hidden) render(); }, 250);
 render(); updateAccess();
+loadSnapshot();
 if (client) {
   client.auth.onAuthStateChange((_event, nextSession) => { queueMicrotask(() => checkAccess(nextSession)); });
   client.auth.getSession().then(({ data: auth }) => checkAccess(auth.session));

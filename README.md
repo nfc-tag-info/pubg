@@ -33,6 +33,18 @@ Jeigu `config.js` reikšmės tuščios, įsijungia aiškiai pažymėta vietinė 
 
 Supabase RLS leidžia viešai skaityti komandos duomenis, bet rašyti tik į `squad_admins` įtrauktiems naudotojams. Teisių lentelės iš naršyklės papildyti negalima. Neprisijungę ir paprasti prisijungę naudotojai rašyti negali. Iki ryšio patvirtinimo realus išsaugojimas išjungtas. Ryšiui nutrūkus rodomi paskutiniai gauti duomenys su aiškiu įspėjimu.
 
+## Automatinė patikra ir atsarginis grafikas
+
+GitHub Actions `Squad data check and backup` tikrina duomenis du kartus per dieną: 06:23 ir 18:41 UTC, kiekvieną kartą pridėdama atsitiktinę 0–10 minučių pauzę. Lietuvos vasaros laiku tai maždaug 09:23–09:33 ir 21:41–21:51, žiemos laiku – valanda anksčiau. GitHub apkrova gali papildomai pavėlinti paleidimą. Rankiniai paleidimai vyksta be pauzės.
+
+Patikra tik perskaito viešą `squad_state` įrašą. Patvirtinus duomenų struktūrą, pasikeitęs grafikas įrašomas į `squad-snapshot.json`, o GitHub Pages atnaujinimas užsakomas atskirai (standartinis Actions žetonas pats naujo diegimo neinicijuoja). Nepavykus nuskaityti, paskutinė gera kopija išlieka. Slaptažodžio ar Supabase administratoriaus rakto nereikia. Trumpalaikis GitHub žetonas naudojamas tik Actions vykdymo metu.
+
+Nepasiekiant Supabase, net naujas telefonas gali rodyti svetainėje paskelbtą kopiją. Naujesnė įrenginio kopija turi pirmenybę prieš senesnį atsarginį failą; gautas gyvas atsakymas turi pirmenybę prieš atsarginį failą. Atsarginis režimas pažymėtas, redagavimas išjungtas, laikas skaičiuojamas pagal įrenginio laikrodį. Tai paskutinės sėkmingos patikros grafikas, ne garantuotai naujausi duomenys: pakeitimai į viešą kopiją patenka per kitą sėkmingą patikrą ir diegimą.
+
+Supabase negarantuoja, kad toks aktyvumas panaikins nemokamo plano pristabdymą. GitHub viešų saugyklų grafikai gali būti išjungti po 60 dienų be saugyklos aktyvumo; jei duomenys nepasikeičia, tušti commitai nekuriami. Patikros būseną galima matyti projekto Actions lange ir prireikus pasirinkti Enable workflow / Run workflow. Atsarginis failas veikia ir išjungus grafiką, tačiau nebeatsinaujina.
+
+Vietinis eksportas: `npm run backup`. Automatiniai testai tikrina, kad klaida ar senesnė versija nepakeistų geros kopijos, ir naršyklės veikimą be Supabase.
+
 ## Darbas vietoje
 
 Reikia Node.js 22 ar naujesnio.
