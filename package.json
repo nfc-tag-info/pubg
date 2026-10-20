@@ -9,7 +9,8 @@
     "serve": "node scripts/serve.mjs",
     "test:database": "node scripts/database-check.mjs",
     "test:live": "node scripts/live-check.mjs",
-    "test:browser": "node scripts/browser-check.mjs && node scripts/sync-check.mjs"
+    "test:browser": "node scripts/browser-check.mjs && node scripts/sync-check.mjs && node scripts/fallback-check.mjs",
+    "backup": "node scripts/backup.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.102.0"

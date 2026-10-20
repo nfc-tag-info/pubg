@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "projectUrl": "https://elydoynuodcpdzaufcnp.supabase.co",
+  "version": 11,
+  "updatedAt": "2026-10-11T11:25:48.676947+00:00",
+  "data": {
+    "players": [
+      {
+        "id": "p1",
+        "nick": "Gintuxs"
+      },
+      {
+        "id": "p2",
+        "nick": "Obas86"
+      },
+      {
+        "id": "p3",
+        "nick": "Vipux"
+      },
+      {
+        "id": "p4",
+        "nick": "Gitoshi"
+      }
+    ],
+    "meetings": [
+      {
+        "id": "m1",
+        "end": "2026-10-11T09:00:00.000Z",
+        "note": "monitorius pelė klava pakrovėjas alus",
+        "place": "Sodyba",
+        "start": "2026-10-09T13:00:00.000Z",
+        "attendance": {
+          "p1": "ready",
+          "p2": "ready",
+          "p3": "waiting",
+          "p4": "absent"
+        }
+      },
+      {
+        "id": "m2",
+        "end": "2026-11-08T14:00:00.000Z",
+        "note": "",
+        "place": "Sodyba",
+        "start": "2026-11-06T14:00:00.000Z",
+        "attendance": {
+          "p1": "ready",
+          "p2": "ready",
+          "p3": "ready",
+          "p4": "ready"
+        }
+      },
+      {
+        "id": "m3",
+        "end": "2026-12-13T14:00:00.000Z",
+        "note": "",
+        "place": "Sodyba",
+        "start": "2026-12-11T14:00:00.000Z",
+        "attendance": {
+          "p1": "waiting",
+          "p2": "waiting",
+          "p3": "waiting",
+          "p4": "waiting"
+        }
+      },
+      {
+        "id": "m4",
+        "end": "2027-01-10T14:00:00.000Z",
+        "note": "",
+        "place": "Sodyba",
+        "start": "2027-01-08T14:00:00.000Z",
+        "attendance": {
+          "p1": "waiting",
+          "p2": "waiting",
+          "p3": "waiting",
+          "p4": "waiting"
+        }
+      },
+      {
+        "id": "m5",
+        "end": "2027-02-14T14:00:00.000Z",
+        "note": "",
+        "place": "Sodyba",
+        "start": "2027-02-12T14:00:00.000Z",
+        "attendance": {
+          "p1": "waiting",
+          "p2": "waiting",
+          "p3": "waiting",
+          "p4": "waiting"
+        }
+      },
+      {
+        "id": "m6",
+        "end": "2027-03-14T14:00:00.000Z",
+        "note": "",
+        "place": "Sodyba",
+        "start": "2027-03-12T14:00:00.000Z",
+        "attendance": {
+          "p1": "waiting",
+          "p2": "waiting",
+          "p3": "waiting",
+          "p4": "waiting"
+        }
+      }
+    ]
+  }
+}

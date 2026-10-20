@@ -1,0 +1,50 @@
+name: Squad data check and backup
+
+on:
+  schedule:
+    - cron: '23 6 * * *'
+    - cron: '41 18 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/squad-backup.yml'
+      - 'scripts/backup.mjs'
+      - 'scripts/publish-backup.mjs'
+      - 'src/snapshot.mjs'
+      - 'src/model.mjs'
+      - 'config.js'
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: squad-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Vary scheduled checks by zero to ten minutes
+        if: github.event_name == 'schedule'
+        shell: bash
+        run: |
+          delay=$(shuf -i 0-600 -n 1)
+          echo "Scheduled check delay: ${delay}s"
+          sleep "$delay"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Read and validate public meeting data
+        run: node scripts/backup.mjs
+      - name: Publish changed backup and refresh Pages
+        run: node scripts/publish-backup.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
